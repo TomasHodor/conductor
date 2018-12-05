@@ -579,7 +579,7 @@ a:hover {
 }
 
 .menuList {
-  margin-top: 100px;
+  margin-top: 30px;
 }
 
 .menuHeader {
@@ -590,6 +590,10 @@ a:hover {
   padding: 0 10px;
   letter-spacing: 1px;
   color: #fff;
+}
+
+.introjs-fixParent {
+    position: absolute !important;
 }
 
 
@@ -727,6 +731,10 @@ table tbody {
   padding-right: 10px;
 }
 
+#innerHelp {
+  display: table;
+  margin: 0 auto;
+}
 
 
 #propsdiv {

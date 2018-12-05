@@ -73,6 +73,52 @@ class WorkflowMetaInput extends Component {
         this.setState({ showCron: false})
     }
 
+    startIntro() {
+        let intro = introJs();
+        let _this = this;
+        intro.setOptions({
+            showStepNumbers: true,
+            steps: [
+                {
+                    intro: "Input table with data from workflow definition",
+                    element: document.getElementById("inputForm"),
+                    position: 'right'
+                },
+                {
+                    intro: "Description of worklflow",
+                    element: document.getElementById("desc"),
+                    position: 'right'
+                },
+                {
+                    intro: "Inputs with labels and description",
+                    element: document.getElementById("inputs"),
+                    position: 'right'
+                },
+                {
+                    intro: "Expandable scheduling settings, click plus/minus button to turn on/off",
+                    element: document.getElementById("plusbutton"),
+                    position: 'right'
+                },
+                {
+                    intro: "Execute/Schedule workflow",
+                    element: document.getElementById("executebutton"),
+                    position: 'right'
+                },
+                {
+                    intro: "Result of current workflow execution, including link and status",
+                    element: document.getElementById("console-log"),
+                    position: 'right'
+                },
+            ]
+        });
+        intro.onchange(function () {
+            console.log(this._currentStep);
+            if (this._currentStep === 3) {
+                _this.setState({ showCron: true})
+            }
+        }).start();
+    }
+
     render() {
         const { loading, log, showCron } = this.state;
         const values = this.props.workflowForm.values || [];
@@ -132,10 +178,11 @@ class WorkflowMetaInput extends Component {
         }
 
         return (
-            <div className="input-form">
-                <Panel header="Execute workflow">
+            <div id="inputForm" className="input-form">
+                <Panel header={<span>Execute workflow&nbsp;&nbsp;<i className="fas fa-info-circle" onClick={() => {this.startIntro()}}/></span>}>
                     <h1>Inputs of <Label bsStyle={log ? (log.error ? "danger":"success"):"info"}>{this.props.name}</Label> workflow</h1>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;{this.props.meta ? this.props.meta.description : null}</p>
+                    <p id="desc">&nbsp;&nbsp;&nbsp;&nbsp;{this.props.meta ? this.props.meta.description : null}</p>
+                        <div id="inputs">
                         {labels.map((item, idx) =>
                          <form onSubmit={!loading ? this.startWorfklow : null}>
                             &nbsp;&nbsp;
@@ -147,9 +194,9 @@ class WorkflowMetaInput extends Component {
                                  {renderDesc(idx)}
                                  &nbsp;&nbsp;
                          </form>)}
+                        </div>
 
-                    <h3>Schedule workflow &nbsp;&nbsp;
-
+                    <h3 id="plusbutton">Schedule workflow &nbsp;&nbsp;
                         <Button className="btn btn-default btn-circle" bsSize="xsmall"
                                 onClick={showCron ? this.hideCron.bind(this) : this.showCron.bind(this)}>
                             { showCron ?  <i className="fas fa-minus"/> : <i className="fas fa-plus"/> }
@@ -162,16 +209,27 @@ class WorkflowMetaInput extends Component {
                             {renderCronComp()}<br/>
                     </CSSTransitionGroup>
 
+                    <div id="executebutton">
                     <Button bsStyle="primary"
                             bsSize="large"
                             disabled={loading}
                             onClick={!loading ? this.startWorfklow : null}>
-                            { showCron ? (loading ? <i className="fas fa-spinner fa-spin"/> : <i className="far fa-calendar-alt"/>) : (loading ? <i className="fas fa-spinner fa-spin"/> : <i className="fa fa-play"/>)}
-                            &nbsp;&nbsp;{ showCron ? ( loading ? 'Scheduling...' : 'Schedule workflow') : ( loading ? 'Executing...' : 'Execute workflow') }
+                            { showCron ?
+                            (loading ? <i className="fas fa-spinner fa-spin"/> : <i className="far fa-calendar-alt"/>)
+                            :
+                            (loading ? <i className="fas fa-spinner fa-spin"/> : <i className="fa fa-play"/>)}
+                            &nbsp;&nbsp;
+                            { showCron ?
+                            ( loading ? 'Scheduling...' : 'Schedule workflow')
+                            :
+                            ( loading ? 'Executing...' : 'Execute workflow') }
                     </Button>
+                    </div>
 
+                    <div id="console-log">
                     <h3>Console log</h3>
                         {consoleLog()}
+                    </div>
 
                 </Panel>
             </div>

@@ -36,9 +36,41 @@ const WorkflowMetaList = React.createClass({
     tags = _.uniq(tags);
 
     return (
-      tags.map((item, idx) => 
+      tags.map((item, idx) => (
         <Button onClick={() => { this.handleSearch(item)} }>{item}</Button>)
+      )
     )
+  },
+
+  startIntro() {
+      let intro = introJs();
+      let _this = this;
+      intro.setOptions({
+          showStepNumbers: false,
+          steps: [
+              {
+                  intro: "Apply filter to easily find workflows",
+                  element: document.querySelector('#tagFilter'),
+                  position: 'down'
+              },
+              {
+                  intro: "Filtered by category: EXAMPLE",
+                  position: 'down'
+              },
+              {
+                  intro: "List of all workflows by selected category",
+                  element: document.querySelector('#bttable'),
+                  position: 'down'
+              },
+          ]
+      });
+      intro.onchange(function() {
+        if(this._currentStep === 1){
+            _this.handleSearch("EXAMPLE");
+        }
+      }).start().oncomplete(function () {
+          _this.handleSearch("");
+      })
   },
 
   handleSearch(item) {
@@ -74,17 +106,24 @@ const WorkflowMetaList = React.createClass({
       return (<Link to={`/workflow/metadata/${row.name}/${row.version}`}>{row.name} / {row.version}</Link>);
     };
 
-  
     return (
       <div className="ui-content">
-        <h1>Workflows</h1>
-        <Button onClick={() => {this.handleSearch("")} }>ALL</Button>
-        {this.filterLabels()}
-        <BootstrapTable ref="table" data={wfs} striped={true} hover={true} search={true} exportCSV={false} pagination={false}>
+
+        <h1>Workflows&nbsp;&nbsp;<i className="fas fa-info-circle" style={{fontSize: 20}} onClick={() => {this.startIntro()}}/></h1>
+
+        <div id="tagFilter">
+            <Button onClick={() => {this.handleSearch("")} }>ALL</Button>
+            {this.filterLabels()}
+        </div>
+
+        <div id="bttable">
+          <BootstrapTable ref="table" data={wfs} striped={true} hover={true} search={true} exportCSV={false} pagination={false}>
           <TableHeaderColumn dataField="name" isKey={true} dataAlign="left" dataSort={true} dataFormat={nameMaker}>Name/Version</TableHeaderColumn>
           <TableHeaderColumn dataField="inputParameters" width="500" dataSort={true} dataFormat={jsonMaker}>Input Parameters</TableHeaderColumn>
           <TableHeaderColumn dataField="tasks" hidden={false} dataFormat={taskMaker}>Tasks</TableHeaderColumn>
           </BootstrapTable>
+        </div>
+
       </div>
     );
   }

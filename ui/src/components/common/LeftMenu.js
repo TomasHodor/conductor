@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Link } from 'react-router'
 import { connect } from 'react-redux';
+import {Button} from "react-bootstrap";
 
 const menuPaths = {
   Workflow: [{
@@ -84,7 +85,7 @@ const LeftMenu = React.createClass({
 
   componentDidMount() {
    window.addEventListener('resize', this.handleResize);
- },
+  },
 
  componentWillUnmount() {
    window.removeEventListener('resize', this.handleResize);
@@ -110,14 +111,15 @@ const LeftMenu = React.createClass({
       let iconClass = 'fa ' + cv['icon'];
       if(cv['header'] == true) {
         menuItems.push((
-          <div className="" key={`key-${(keyVal += 1)}`}>
+          <div id={`opt${i}`} className="" key={`key-${(keyVal += 1)}`}>
             <div className='menuHeader'><i className='fa fa-angle-down'></i>&nbsp;{cv['label']}</div>
           </div>
         ));
-      } else {
+      }
+        else {
         menuItems.push((
           <Link to={cv['href']} key={`key-${(keyVal += 1)}`}>
-              <div className='menuItem'>
+              <div id={`opt${i}`} className='menuItem'>
               <i className={iconClass} style={{width: '20px'}}></i>
               <span style={{ marginLeft: '10px', display: display}}>
                 {cv['label']}
@@ -128,14 +130,45 @@ const LeftMenu = React.createClass({
       }
     });
 
+    function startIntro() {
+        let intro = introJs();
+        intro.setOptions({
+            showStepNumbers: false,
+            steps: [
+                {
+                    intro: "All executed workflows with details sorted by status",
+                    element: document.querySelector('#opt0'),
+                    position: 'right'
+                },
+                {
+                    intro: "List of scheduled workflows with details and controls",
+                    element: document.querySelector('#opt7'),
+                    position: 'right'
+                },
+                {
+                    intro: "List of all available executable workflows.",
+                    element: document.querySelector('#opt9'),
+                    position: 'right'
+
+                }
+            ]
+        });
+        intro.start();
+    }
+
     return (
       <div className="left-menu" style={{width:width}}>
         <div className="logo textual pull-left">
           <a href="/" title="Frinx Conductor">
-            <h4><i className={this.state.loading?"fa fa-bars fa-spin fa-1x":""}></i>{this.state.loading || minimize?'':<img src="/images/FRINX_logo_smaller.png" width="120" alt="Frinx" margin="15px"></img>}</h4>
+              <h4><i className={this.state.loading ? "fa fa-bars fa-spin fa-1x" : ""}/>{this.state.loading || minimize ? '' :
+                  <img src="/images/FRINX_logo_smaller.png" width="120" alt="Frinx" margin="15px"/>}</h4>
           </a>
         </div>
+
         <div className="menuList">
+            <div id="innerHelp" onClick={ () => {startIntro()} } >
+                <i className="fas fa-info-circle"/>
+            </div>
           {menuItems}
         </div>
       </div>

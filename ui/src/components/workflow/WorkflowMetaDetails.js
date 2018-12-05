@@ -17,7 +17,8 @@ class WorkflowMetaDetails extends Component {
       workflowForm: {
           labels: [],
           descs: [],
-          values: []
+          values: [],
+          key: 1,
       }
     };
   }
@@ -48,6 +49,24 @@ class WorkflowMetaDetails extends Component {
       });
   }
 
+  startIntro() {
+      let intro = introJs();
+      let _this = this;
+      intro.setOptions({
+          showStepNumbers: false,
+          steps: [
+              {
+                  intro: "Here are selected workflow details",
+                  element: document.getElementById("test1"),
+                  position: 'down'
+              },
+          ]
+      });
+      intro.start().oncomplete(function () {
+          _this.setState({ key: 3})
+      })
+  }
+
   render() {
     let wf = this.state.workflowMeta;
     if(wf == null) {
@@ -56,7 +75,7 @@ class WorkflowMetaDetails extends Component {
 
     return (
       <div className="ui-content">
-        <Tabs>
+        <Tabs activeKey={this.state.key}>
           <Tab eventKey={1} title="Diagram">
             <div><WorkflowMetaDia meta={wf} tasks={[]}/></div>
           </Tab>
@@ -66,10 +85,9 @@ class WorkflowMetaDetails extends Component {
           </pre></div>
           </Tab>
           <Tab eventKey={3} title="Input">
-          <div><WorkflowMetaInput workflowForm={this.state.workflowForm} name={this.state.name}/></div>
+            <WorkflowMetaInput workflowForm={this.state.workflowForm} name={this.state.name}/>
           </Tab>
         </Tabs>
-
       </div>
     );
   }
