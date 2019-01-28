@@ -5,12 +5,12 @@ buildscript {
 }
 
 plugins {
-	id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
 configurations.all {
     resolutionStrategy {
-		force 'com.fasterxml.jackson.core:jackson-core:2.7.5'
+        force 'com.fasterxml.jackson.core:jackson-core:2.7.5'
     }
 }
 
@@ -22,16 +22,18 @@ def version = project.findProperty('submodVersion') ?: project.version.toString(
 
 
 dependencies {
-
+ 
 	//Conductor
 	compile "com.netflix.conductor:conductor-core:${version}"
-        compile "com.netflix.conductor:conductor-jersey:${version}"
-        compile "com.netflix.conductor:conductor-redis-persistence:${version}"
-        compile "com.netflix.conductor:conductor-mysql-persistence:${version}"
-        compile "com.netflix.conductor:conductor-contribs:${version}"
-        compile "com.netflix.conductor:conductor-es2-persistence:${version}"
-        compile "com.netflix.conductor:conductor-es5-persistence:${version}"
+    compile "com.netflix.conductor:conductor-jersey:${version}"
+    compile "com.netflix.conductor:conductor-redis-persistence:${version}"
+    compile "com.netflix.conductor:conductor-mysql-persistence:${version}"
+    compile "com.netflix.conductor:conductor-contribs:${version}"
+    compile "com.netflix.conductor:conductor-es2-persistence:${version}"
+    compile "com.netflix.conductor:conductor-es5-persistence:${version}"
+    compile "com.netflix.conductor:conductor-grpc-server:${version}"
 
+	compile "com.netflix.runtime:health-guice:${revHealth}"
 
 	//Jetty
 	compile "org.eclipse.jetty:jetty-server:${revJetteyServer}"
@@ -50,19 +52,19 @@ dependencies {
 }
 
 shadowJar {
-   mergeServiceFiles()
-   configurations = [project.configurations.compile]
-   manifest {
-       attributes 'Description': 'Self contained Conductor server jar'
-       attributes 'Main-Class' : 'com.netflix.conductor.server.Main'
-   }
+    mergeServiceFiles()
+    configurations = [project.configurations.compile]
+    manifest {
+        attributes 'Description': 'Self contained Conductor server jar'
+        attributes 'Main-Class': 'com.netflix.conductor.bootstrap.Main'
+    }
 }
 publishing {
-  publications {
-    nebula(MavenPublication) {
-      artifact shadowJar
+    publications {
+        nebula(MavenPublication) {
+            artifact shadowJar
+        }
     }
-  }
 }
 
 gretty {
@@ -82,11 +84,11 @@ configurations.grettyRunnerTomcat8 {
 build.dependsOn('shadowJar')
 
 task server(type: JavaExec) {
-  systemProperty 'workflow.elasticsearch.url', 'localhost:9300'
+    systemProperty 'workflow.elasticsearch.url', 'localhost:9300'
     // Switch between Elasticsearch versions 2 & 5 with major version number.
   systemProperty 'workflow.elasticsearch.version', '2'
   systemProperty 'loadSample', 'true'
   systemProperties System.properties
-  main = 'com.netflix.conductor.server.Main'
+  main = 'com.netflix.conductor.bootstrap.Main'
   classpath = sourceSets.test.runtimeClasspath  
 }

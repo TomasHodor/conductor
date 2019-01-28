@@ -211,6 +211,12 @@ class WorkflowDetails extends Component {
         this.state.jsonData = dataObject;
     }
 
+    gotoParentWorkflow = ()=> {
+        history.push({
+            pathname:"/workflow/id/" + this.props.data.parentWorkflowId
+        })
+    }
+
     doUnescape(e, option) {
         if(option == 1) {
             let newval = !this.state.unescapeInput;
@@ -282,6 +288,13 @@ class WorkflowDetails extends Component {
             }
         }
 
+        let parentWorkflowButton = "";
+        if(wf.parentWorkflowId){
+            parentWorkflowButton = <Link to={"/workflow/id/" + wf.parentWorkflowId}><Button bsStyle="default" bsSize="xsmall">
+                Parent
+            </Button></Link>;
+        }
+
         return (
             <div className="ui-content">
                 <h4>
@@ -293,6 +306,9 @@ class WorkflowDetails extends Component {
                     <span>
           <WorkflowAction workflowStatus={wf.status} workflowId={wf.workflowId}/>
         </span>
+                <span>
+                  {parentWorkflowButton}
+                </span>
                 </h4>
                 <br/><br/>
                 <Table responsive={true} striped={false} hover={false} condensed={false} bordered={true}>

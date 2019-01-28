@@ -32,6 +32,6 @@ const routeConfig = [
       { path: 'help', component: Help }
     ]
   }
-]
+];
 
 export default routeConfig;

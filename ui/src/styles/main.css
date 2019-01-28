@@ -8,13 +8,13 @@
   font-family: 'Source Sans Pro';
   font-style: normal;
   font-weight: 400;
-  src: local('Source Sans Pro'), local('SourceSansPro-Regular');
+  src: local('Source Sans Pro'), local('SourceSansPro-Regular'), url('../fonts/sourcesanspro.woff') format('woff');
 }
 @font-face {
   font-family: 'Source Sans Pro';
   font-style: normal;
   font-weight: 700;
-  src: local('Source Sans Pro Bold'), local('SourceSansPro-Bold');
+  src: local('Source Sans Pro Bold'), local('SourceSansPro-Bold'), url('../fonts/sourcesanspro-bold.woff') format('woff');
 }
 
 *, *:before, *:after {
@@ -40,7 +40,6 @@ html {
 }
 
 body {
-  xfont-family: 'Open Sans',sans-serif;
   font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #333;
   background-color: #ffff;
@@ -267,7 +266,7 @@ body {
   padding: 0.8em;
 }
 
-.bm-item-list a:link, a:visited  {
+.bm-item-list a:link, .bm-item-list a:visited  {
   color: #b8b7ad;
   padding: 0.8em;
   text-decoration: none;
@@ -579,7 +578,7 @@ a:hover {
 }
 
 .menuList {
-  margin-top: 100px;
+  margin-top: 70px;
 }
 
 .menuHeader {

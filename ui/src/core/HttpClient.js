@@ -8,18 +8,19 @@ function getUrl(path) {
     return path;
   }
 
-  return process.env.WEBSITE_HOSTNAME ?
-    `http://${process.env.WEBSITE_HOSTNAME}${path}` :
-    `http://127.0.0.1:${global.server.get('port')}${path}`;
+  return process.env.WEBSITE_HOSTNAME
+    ? `http://${process.env.WEBSITE_HOSTNAME}${path}`
+    : `http://127.0.0.1:${global.server.get('port')}${path}`;
 }
 
 const HttpClient = {
-
-  get: (path) => new Promise((resolve, reject) => {
-    request
-      .get(getUrl(path))
-      .accept('application/json')
-      .end((err, res) => {
+  get: (path, token) =>
+    new Promise((resolve, reject) => {
+      const req = request.get(getUrl(path)).accept('application/json');
+      if (token) {
+        req.set('Authorization', token);
+      }
+      req.end((err, res) => {
         if (err) {
           //if (err.status === 404) {
           //  resolve(null);
@@ -30,32 +31,33 @@ const HttpClient = {
           resolve(res.body);
         }
       });
-  }),
-
-  post: (path, data) => new Promise((resolve, reject) => {
-    request
-      .post(path, data)
-      .set('Content-Type', 'application/json')
-      .end((err, res) => {
+    }),
+  post: (path, data, token) =>
+    new Promise((resolve, reject) => {
+      const req = request.post(path, data).set('Accept', 'application/json');
+      if (token) {
+        req.set('Authorization', token);
+      }
+      req.end((err, res) => {
         if (err || !res.ok) {
           console.error('Error on post! ' + res);
           reject(err);
         } else {
-          if(res){
-            resolve(res);
-          }else{
+          if (res.body) {
+            resolve(res.body);
+          } else {
             resolve(res);
           }
-
         }
       });
-  }),
-
-  put: (path, data) => new Promise((resolve, reject) => {
-    request
-      .put(path, data)
-      .set('Accept', 'application/json')
-      .end((err, res) => {
+    }),
+  put: (path, data, token) =>
+    new Promise((resolve, reject) => {
+      const req = request.put(path, data).set('Accept', 'application/json');
+      if (token) {
+        req.set('Authorization', token);
+      }
+      req.end((err, res) => {
         if (err || !res.ok) {
           console.error('Error on post! ' + res);
           reject(err);
@@ -63,21 +65,22 @@ const HttpClient = {
           resolve(res.body);
         }
       });
-  }),
-
-  delete: (path, data) => new Promise((resolve, reject) => {
-    request
-      .del(path, data)
-      .set('Accept', 'application/json')
-      .end((err, res) => {
+    }),
+  delete: (path, data, token) =>
+    new Promise((resolve, reject) => {
+      const req = request.del(path, data).set('Accept', 'application/json');
+      if (token) {
+        req.set('Authorization', token);
+      }
+      req.end((err, res) => {
         if (err || !res.ok) {
           console.error('Error on post! ' + err);
           reject(err);
         } else {
-          resolve(res);
+          resolve(res.body);
         }
       });
-  })
+    })
 };
 
 export default HttpClient;

@@ -74,4 +74,5 @@ class WorkflowMetaDetails extends Component {
     );
   }
 };
+
 export default connect(state => state.workflow)(WorkflowMetaDetails);

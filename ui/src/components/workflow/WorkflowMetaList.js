@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, browserHistory } from 'react-router';
-import {Button, Col, Grid, Panel, Row} from 'react-bootstrap';
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
+import { Button, Col, Grid, Panel, Row } from 'react-bootstrap';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { connect } from 'react-redux';
 import { getWorkflowDefs } from '../../actions/WorkflowActions';
 import Typeahead from "react-bootstrap-typeahead";
