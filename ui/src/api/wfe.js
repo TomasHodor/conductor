@@ -18,7 +18,7 @@ const baseURLTask = baseURL + 'tasks/';
 const cronJobs = [];
 const cronHistory = [];
 
-var CronJob = require('cron').CronJob
+var CronJob = require('cron').CronJob;
 router.use(bodyParser.urlencoded({ extended: true}));
 router.use(bodyParser.json());
 
@@ -53,7 +53,7 @@ router.get('/', async (req, res, next) => {
       start +
       '&query=' +
       query;
-    const result = await http.get(url, req.token);
+    const result = await http.get(url);
     const hits = result.results;
     res.status(200).send({ result: { hits: hits, totalHits: result.totalHits } });
   } catch (err) {
@@ -87,7 +87,7 @@ router.get('/search-by-task/:taskId', async (req, res, next) => {
     let query = req.query.q || '';
     const url =
       baseURL2 + 'search-by-tasks?size=100&sort=startTime:DESC&freeText=' + freeText.join(' AND ') + '&start=' + start;
-    const result = await http.get(url, req.token);
+    const result = await http.get(url);
 
     const hits = result.results;
     res.status(200).send({ result: { hits: hits, totalHits: result.totalHits } });
@@ -99,13 +99,12 @@ router.get('/search-by-task/:taskId', async (req, res, next) => {
 router.get('/id/:workflowId', async (req, res, next) => {
 
   try {
-    const result = await http.get(baseURL2 + req.params.workflowId + '?includeTasks=true', req.token);
+    const result = await http.get(baseURL2 + req.params.workflowId + '?includeTasks=true');
 
     let meta = result.workflowDefinition;
     if (!meta) {
       meta = await http.get(
-          baseURLMeta + 'workflow/' + result.workflowType + '?version=' + result.version,
-          req.token
+          baseURLMeta + 'workflow/' + result.workflowType + '?version=' + result.version
       );
     }
 
@@ -123,10 +122,10 @@ router.get('/id/:workflowId', async (req, res, next) => {
             };
           }
         }
-      })(result.tasks || [])
+      })(result.tasks)
     );
 
-    (result.tasks || []).forEach(task => {
+    result.tasks.forEach(task => {
       if (task.taskType === 'SUB_WORKFLOW') {
         const subWorkflowId = task.inputData && task.inputData.subWorkflowId;
 
@@ -177,7 +176,7 @@ router.get('/id/:workflowId', async (req, res, next) => {
 
 router.put('/bulk/pause', async (req, res, next) => {
   try {
-    const result = await http.put(baseURL2 + "bulk/pause", req.body, req.token);
+    const result = await http.put(baseURL2 + "bulk/pause", req.body);
     res.status(200).send(result);
   } catch (err) {
     next(err);
@@ -186,7 +185,7 @@ router.put('/bulk/pause', async (req, res, next) => {
 
 router.put('/bulk/resume', async (req, res, next) => {
   try {
-    const result = await http.put(baseURL2 + "bulk/resume", req.body, req.token);
+    const result = await http.put(baseURL2 + "bulk/resume", req.body);
     res.status(200).send(result);
   } catch (err) {
     next(err);
@@ -195,7 +194,7 @@ router.put('/bulk/resume', async (req, res, next) => {
 
 router.post('/bulk/retry', async (req, res, next) => {
   try {
-    const result = await http.post(baseURL2 + "bulk/retry", req.body, req.token);
+    const result = await http.post(baseURL2 + "bulk/retry", req.body);
     res.status(200).send(result);
   } catch (err) {
     next(err);
@@ -204,7 +203,7 @@ router.post('/bulk/retry', async (req, res, next) => {
 
 router.post('/bulk/restart', async (req, res, next) => {
   try {
-    const result = await http.post(baseURL2 + "bulk/restart", req.body, req.token);
+    const result = await http.post(baseURL2 + "bulk/restart", req.body);
     res.status(200).send(result);
   } catch (err) {
     next(err);
@@ -213,7 +212,7 @@ router.post('/bulk/restart', async (req, res, next) => {
 
 router.delete('/bulk/terminate', async (req, res, next) => {
   try {
-    const result = await http.delete(baseURL2 + "bulk/terminate", req.body, req.token);
+    const result = await http.delete(baseURL2 + "bulk/terminate", req.body);
     res.status(200).send(result);
   } catch (err) {
     next(err);
@@ -222,7 +221,7 @@ router.delete('/bulk/terminate', async (req, res, next) => {
 
 router.delete('/terminate/:workflowId', async (req, res, next) => {
   try {
-    const result = await http.delete(baseURL2 + req.params.workflowId, {}, req.token);
+    const result = await http.delete(baseURL2 + req.params.workflowId, {});
     res.status(200).send({ result: req.params.workflowId });
   } catch (err) {
 
@@ -240,7 +239,7 @@ router.delete('/workflow/:workflowId', async (req, res, next) => {
 
 router.post('/restart/:workflowId', async (req, res, next) => {
   try {
-    const result = await http.post(baseURL2 + req.params.workflowId + '/restart', {}, req.token);
+    const result = await http.post(baseURL2 + req.params.workflowId + '/restart', {});
     res.status(200).send({ result: req.params.workflowId });
   } catch (err) {
     next(err);
@@ -354,7 +353,7 @@ router.delete('/cronjobs/delete/:cronjobId', async (req, res, next) => {
 //////////////////////////
 router.post('/retry/:workflowId', async (req, res, next) => {
   try {
-    const result = await http.post(baseURL2 + req.params.workflowId + '/retry', {}, req.token);
+    const result = await http.post(baseURL2 + req.params.workflowId + '/retry');
     res.status(200).send({ result: req.params.workflowId });
   } catch (err) {
     next(err);
@@ -372,7 +371,7 @@ router.post('/pause/:workflowId', async (req, res, next) => {
 
 router.post('/resume/:workflowId', async (req, res, next) => {
   try {
-    const result = await http.put(baseURL2 + req.params.workflowId + '/resume', {}, req.token);
+    const result = await http.put(baseURL2 + req.params.workflowId + '/resume');
     res.status(200).send({ result: req.params.workflowId });
   } catch (err) {
     next(err);
@@ -383,8 +382,7 @@ router.post('/resume/:workflowId', async (req, res, next) => {
 router.get('/metadata/workflow/:name/:version', async (req, res, next) => {
   try {
     const result = await http.get(
-      baseURLMeta + 'workflow/' + req.params.name + '?version=' + req.params.version,
-      req.token
+      baseURLMeta + 'workflow/' + req.params.name + '?version=' + req.params.version
     );
     res.status(200).send({ result });
   } catch (err) {
@@ -394,7 +392,7 @@ router.get('/metadata/workflow/:name/:version', async (req, res, next) => {
 
 router.get('/metadata/workflow', async (req, res, next) => {
   try {
-    const result = await http.get(baseURLMeta + 'workflow', req.token);
+    const result = await http.get(baseURLMeta + 'workflow');
     res.status(200).send({ result });
   } catch (err) {
     next(err);
@@ -403,7 +401,7 @@ router.get('/metadata/workflow', async (req, res, next) => {
 
 router.get('/metadata/taskdef', async (req, res, next) => {
   try {
-    const result = await http.get(baseURLMeta + 'taskdefs', req.token);
+    const result = await http.get(baseURLMeta + 'taskdefs');
     res.status(200).send({ result });
   } catch (err) {
     next(err);
@@ -412,7 +410,7 @@ router.get('/metadata/taskdef', async (req, res, next) => {
 
 router.get('/task/log/:taskId', async (req, res, next) => {
   try {
-    const logs = await http.get(baseURLTask + req.params.taskId + '/log', req.token);
+    const logs = await http.get(baseURLTask + req.params.taskId + '/log');
     res.status(200).send({ logs });
   } catch (err) {
     next(err);
@@ -421,8 +419,8 @@ router.get('/task/log/:taskId', async (req, res, next) => {
 
 router.get('/queue/data', async (req, res, next) => {
   try {
-    const sizes = await http.get(baseURLTask + 'queue/all', req.token);
-    const polldata = await http.get(baseURLTask + 'queue/polldata/all', req.token);
+    const sizes = await http.get(baseURLTask + 'queue/all');
+    const polldata = await http.get(baseURLTask + 'queue/polldata/all');
     polldata.forEach(pd => {
       var qname = pd.queueName;
 
